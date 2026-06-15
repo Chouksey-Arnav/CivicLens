@@ -53,7 +53,16 @@ CONGRESS_API_KEY=your_key_here
 GROQ_API_KEY=your_key_here
 ```
 
-Restart `python app.py`. The yellow demo banner disappears once both keys are set, and the app pulls live bills and generates real AI summaries.
+Restart `python api/app.py`. The yellow demo banner disappears once both keys are set, and the app pulls live bills and generates real AI summaries.
+
+### Deploying to Vercel
+
+If you are deploying to Vercel, you should **not** upload your `.env` file. Instead, add these same keys as **Environment Variables** in your Vercel Project Settings:
+
+1. Go to your project on the Vercel Dashboard.
+2. Go to **Settings** > **Environment Variables**.
+3. Add `CONGRESS_API_KEY` and `GROQ_API_KEY` with your respective values.
+4. Redeploy your project for the changes to take effect.
 
 Full setup instructions are also built into the app's **About** page.
 

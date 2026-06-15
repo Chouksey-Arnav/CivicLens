@@ -66,6 +66,12 @@ cp .env.example .env</code></pre>
   <pre><code>CONGRESS_API_KEY=your_key_here
 GROQ_API_KEY=your_key_here</code></pre>
 
+  <p>
+    <strong>Deploying to Vercel?</strong> Don't use a <code>.env</code> file.
+    Instead, add <code>CONGRESS_API_KEY</code> and <code>GROQ_API_KEY</code>
+    as <strong>Environment Variables</strong> in your Vercel Project Settings.
+  </p>
+
   <h3>4. Run it</h3>
   <pre><code>python api/app.py</code></pre>
   <p>
