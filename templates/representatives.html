@@ -12,22 +12,35 @@
   </p>
 
   <div class="search-card">
-    <form class="rep-form" method="get" action="{{ url_for('representatives') }}">
-      <div class="field">
-        <label for="state">State</label>
-        <select id="state" name="state">
-          <option value="">Choose a state&hellip;</option>
-          {% for code, name in states %}
-            <option value="{{ code }}" {{ 'selected' if code == state else '' }}>{{ name }}</option>
-          {% endfor %}
-        </select>
+    <div class="summary-grid" style="gap: 2rem;">
+      <form class="rep-form" method="get" action="{{ url_for('representatives') }}">
+        <div class="field">
+          <label for="state">Find by State</label>
+          <select id="state" name="state">
+            <option value="">Choose a state&hellip;</option>
+            {% for code, name in states %}
+              <option value="{{ code }}" {{ 'selected' if code == state else '' }}>{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label for="district">District (optional)</label>
+          <input type="text" id="district" name="district" inputmode="numeric" placeholder="e.g. 4" value="{{ district }}" style="width: 90px;">
+        </div>
+        <button class="btn" type="submit">Find by Location</button>
+      </form>
+
+      <div style="border-left: 1px solid #ddd; padding-left: 2rem;">
+        <form class="rep-form" method="get" action="{{ url_for('representatives') }}">
+          <div class="field">
+            <label for="name">Find by Name</label>
+            <input type="text" id="name" name="name" placeholder="e.g. Pelosi, Sanders" value="{{ name }}">
+          </div>
+          <button class="btn" type="submit" style="margin-top: 2.2rem;">Search by Name</button>
+        </form>
       </div>
-      <div class="field">
-        <label for="district">District (optional)</label>
-        <input type="text" id="district" name="district" inputmode="numeric" placeholder="e.g. 4" value="{{ district }}" style="width: 90px;">
-      </div>
-      <button class="btn" type="submit">Find reps</button>
-    </form>
+    </div>
+
     <p class="search-hint">
       Not sure of your district? Leave it blank to see every House member for your state,
       or look it up at
@@ -42,7 +55,7 @@
 </div>
 {% endif %}
 
-{% if state %}
+{% if state or name %}
   {% set senators = members|selectattr("chamber", "equalto", "Senate")|list %}
   {% set house_members = members|rejectattr("chamber", "equalto", "Senate")|list %}
 

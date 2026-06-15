@@ -17,8 +17,8 @@
         type="text"
         name="q"
         value="{{ query }}"
-        placeholder="Search recent bills by keyword (e.g. broadband, school, veterans)"
-        aria-label="Search recent bills by keyword"
+        placeholder="Search any bill in the world by keyword or number"
+        aria-label="Search bills"
       >
       <button class="btn" type="submit">Search</button>
       {% if query %}
@@ -29,7 +29,8 @@
       {% if demo_mode_bills %}
         Searching the bundled sample bills right now &mdash; add a free Congress.gov API key for live data.
       {% elif query %}
-        Searched the 250 most recently updated bills in the {{ current_congress }}th Congress by title.
+        Searched recently updated bills across the last three Congresses.
+        If it's not in the US database, our AI (Grok) will search its global knowledge.
       {% else %}
         Showing the {{ bills|length }} most recently updated bills in the {{ current_congress }}th Congress.
       {% endif %}
@@ -49,12 +50,45 @@
     {% if query %}<span class="bill-meta">{{ bills|length }} match{{ 'es' if bills|length != 1 else '' }} for &ldquo;{{ query }}&rdquo;</span>{% endif %}
   </div>
 
+  {% if ai_result %}
+  <div class="ai-global-result">
+    <div class="ai-badge">AI Global Find (Grok)</div>
+    <h3>{{ ai_result.title }}</h3>
+    <div class="bill-meta">Jurisdiction: <strong>{{ ai_result.jurisdiction }}</strong></div>
+
+    <div class="summary-section">
+      <p>{{ ai_result.plain_summary }}</p>
+
+      <div class="summary-grid">
+        <div>
+          <h4>Who it affects</h4>
+          <ul>
+            {% for item in ai_result.who_it_affects %}<li>{{ item }}</li>{% endfor %}
+          </ul>
+        </div>
+        <div>
+          <h4>Key provisions</h4>
+          <ul>
+            {% for item in ai_result.key_provisions %}<li>{{ item }}</li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <h4>Why it matters</h4>
+      <p>{{ ai_result.why_it_matters }}</p>
+    </div>
+  </div>
+  {% endif %}
+
   {% if bills %}
   <div class="bill-grid">
     {% for bill in bills %}
       {% set status = status_label(bill.latestAction.text if bill.latestAction else '') %}
       <a class="bill-card" href="{{ url_for('bill_detail', congress=bill.congress, bill_type=bill.type|lower, number=bill.number) }}">
-        <span class="bill-number">{{ bill_label(bill) }}</span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <span class="bill-number">{{ bill_label(bill) }}</span>
+          <span class="bill-meta">{{ bill.congress }}th Congress</span>
+        </div>
         <h3>{{ bill.title }}</h3>
         <div class="bill-meta">
           {% if bill.policyArea %}<span>{{ bill.policyArea.name }}</span>{% endif %}
@@ -64,9 +98,9 @@
       </a>
     {% endfor %}
   </div>
-  {% else %}
+  {% elif not ai_result and query %}
   <div class="empty-state">
-    <p>No bills matched &ldquo;{{ query }}&rdquo;. Try a different keyword.</p>
+    <p>No bills matched &ldquo;{{ query }}&rdquo;. Try a different keyword or bill number.</p>
   </div>
   {% endif %}
 </section>

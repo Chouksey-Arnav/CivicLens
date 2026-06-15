@@ -119,6 +119,7 @@ def inject_globals():
 def index():
     query = request.args.get("q", "").strip()
     error = None
+    ai_result = None
 
     if DEMO_MODE_BILLS:
         bills = demo_data.search_sample_bills(query)
@@ -126,13 +127,21 @@ def index():
         try:
             if query:
                 bills = congress_api.search_bills(query)
+                # If no US bills found, try AI global search
+                if not bills and not DEMO_MODE_AI:
+                    try:
+                        ai_result = ai_summarizer.summarize_from_knowledge(query)
+                        if ai_result.get("error"):
+                            ai_result = None
+                    except Exception:
+                        ai_result = None
             else:
                 bills = congress_api.get_recent_bills(limit=RECENT_BILLS_LIMIT)
         except CongressAPIError as exc:
             bills = []
             error = str(exc)
 
-    return render_template("index.html", bills=bills, query=query, error=error)
+    return render_template("index.html", bills=bills, query=query, error=error, ai_result=ai_result)
 
 
 @app.route("/bill/<int:congress>/<bill_type>/<int:number>")
@@ -190,10 +199,24 @@ def bill_detail(congress, bill_type, number):
 def representatives():
     state = request.args.get("state", "").strip().upper()
     district = request.args.get("district", "").strip()
+    name = request.args.get("name", "").strip()
     members = []
     error = None
 
-    if state:
+    if name:
+        if DEMO_MODE_BILLS:
+            # Simple demo filter for name search
+            all_demo = []
+            for m_list in demo_data.SAMPLE_MEMBERS.values():
+                all_demo.extend(m_list)
+            members = [m for m in all_demo if name.lower() in m.get("name", "").lower()]
+        else:
+            try:
+                raw_members = congress_api.search_members_by_name(name)
+                members = [normalize_member(m) for m in raw_members]
+            except CongressAPIError as exc:
+                error = str(exc)
+    elif state:
         if DEMO_MODE_BILLS:
             members = demo_data.SAMPLE_MEMBERS.get(state, [])
         else:
@@ -208,7 +231,7 @@ def representatives():
 
     return render_template(
         "representatives.html", states=US_STATES, state=state, district=district,
-        members=members, error=error,
+        name=name, members=members, error=error,
     )
 
 

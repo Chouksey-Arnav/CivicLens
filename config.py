@@ -18,12 +18,18 @@ CONGRESS_API_KEY = os.environ.get("CONGRESS_API_KEY", "").strip()
 # Free key (no credit card): https://console.groq.com/keys
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
 
+# xAI Grok API key: https://console.x.ai/
+XAI_API_KEY = os.environ.get("XAI_API_KEY", "").strip()
+
 FLASK_SECRET_KEY = os.environ.get("FLASK_SECRET_KEY", "dev-key-change-me")
 
 # --- API endpoints --------------------------------------------------------
 CONGRESS_API_BASE = "https://api.congress.gov/v3"
 GROQ_API_BASE = "https://api.groq.com/openai/v1"
 GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+
+XAI_API_BASE = "https://api.x.ai/v1"
+XAI_MODEL = os.environ.get("XAI_MODEL", "grok-2-1212")
 
 # The Congress currently in session. 119th Congress = 2025-2027.
 # Update this every two years (odd-numbered years, January).
@@ -42,7 +48,7 @@ else:
 # If a key is missing, CivicLens automatically falls back to bundled sample
 # data so the app is fully explorable with zero setup.
 DEMO_MODE_BILLS = not CONGRESS_API_KEY
-DEMO_MODE_AI = not GROQ_API_KEY
+DEMO_MODE_AI = not (GROQ_API_KEY or XAI_API_KEY)
 
 # --- Reference data --------------------------------------------------------
 US_STATES = [
