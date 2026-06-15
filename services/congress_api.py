@@ -60,39 +60,88 @@ def get_recent_bills(limit=20, congress=CURRENT_CONGRESS):
     return data.get("bills", [])
 
 
+import re
+
+def _parse_bill_query(query):
+    """
+    Try to parse a bill number from a query like 'HR 123' or 's. 50'.
+    Returns (bill_type, number) or (None, None).
+    """
+    # Regex matches: (optional prefix/jargon) (type letters) (optional space/period) (numbers)
+    # e.g. "HR 123", "s.50", "H.R. 4210"
+    match = re.search(r"([a-zA-Z\.\s]+)\s*(\d+)", query)
+    if not match:
+        return None, None
+
+    raw_type, number = match.groups()
+    # Clean type: remove dots, spaces, lowercase
+    clean_type = re.sub(r"[\.\s]", "", raw_type).lower()
+
+    # Map common variations to standard codes
+    type_map = {
+        "hr": "hr", "housebill": "hr",
+        "s": "s", "senatebill": "s",
+        "hjres": "hjres", "housejointresolution": "hjres",
+        "sjres": "sjres", "senatejointresolution": "sjres",
+        "hconres": "hconres", "houseconcurrentresolution": "hconres",
+        "sconres": "sconres", "senateconcurrentresolution": "sconres",
+        "hres": "hres", "houseresolution": "hres",
+        "sres": "sres", "senateresolution": "sres"
+    }
+
+    return type_map.get(clean_type), number
+
 def search_bills(query, congress=CURRENT_CONGRESS, fetch_limit=250, max_results=25):
     """
-    Search bills by keyword.
+    Search bills by keyword or bill number.
 
-    The Congress.gov API has no full-text search endpoint, so this pulls a
-    batch of the most recently updated bills for the current Congress and
-    filters by title on our side.
-
-    If no matches are found in the current Congress, it automatically
-    checks the previous Congress (118th) as well.
+    The Congress.gov API doesn't have a direct keyword search for bills,
+    so we fetch a large batch of recent bills and filter by title.
+    We also check the previous Congress if no matches are found.
     """
-    query_lower = query.lower().strip()
+    query_raw = query.strip()
+    query_lower = query_raw.lower()
+
     if not query_lower:
         data = _get(f"/bill/{congress}", params={"limit": fetch_limit, "sort": "updateDate+desc"})
         return data.get("bills", [])[:max_results]
 
-    # Try current congress first
-    data = _get(f"/bill/{congress}", params={"limit": fetch_limit, "sort": "updateDate+desc"})
-    bills = data.get("bills", [])
-    matches = [b for b in bills if query_lower in b.get("title", "").lower()]
-
-    # If no matches and we are in the current congress, fallback to the previous one
-    if not matches and congress == CURRENT_CONGRESS:
-        previous_congress = congress - 1
+    # --- 1. Try parsing as a specific bill number (e.g. HR 123) ---
+    b_type, b_num = _parse_bill_query(query_raw)
+    if b_type and b_num:
+        print(f"DEBUG: Search query '{query_raw}' parsed as bill {b_type} {b_num}")
         try:
-            data = _get(f"/bill/{previous_congress}", params={"limit": fetch_limit, "sort": "updateDate+desc"})
+            # Try current congress first
+            bill = get_bill(congress, b_type, b_num)
+            if bill:
+                return [bill]
+            # Try previous congress
+            bill = get_bill(congress - 1, b_type, b_num)
+            if bill:
+                return [bill]
+        except Exception as e:
+            print(f"DEBUG: Direct bill lookup failed: {e}")
+
+    # --- 2. Keyword search in recent bills (Title matching) ---
+    # We fetch more bills to increase match probability
+    total_matches = []
+
+    for c in [congress, congress - 1]:
+        print(f"DEBUG: Searching keywords in Congress {c}")
+        try:
+            # Fetch a large batch
+            data = _get(f"/bill/{c}", params={"limit": fetch_limit, "sort": "updateDate+desc"})
             bills = data.get("bills", [])
             matches = [b for b in bills if query_lower in b.get("title", "").lower()]
-        except CongressAPIError:
-            # If previous congress fails, just return the empty current matches
-            pass
+            total_matches.extend(matches)
 
-    return matches[:max_results]
+            if len(total_matches) >= max_results:
+                break
+        except Exception as e:
+            print(f"DEBUG: Keyword search in Congress {c} failed: {e}")
+            continue
+
+    return total_matches[:max_results]
 
 
 def get_bill(congress, bill_type, number):

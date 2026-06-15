@@ -12,6 +12,16 @@
   </p>
 
   <div class="search-card">
+    <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      {% if has_congress_key %}
+        <span class="stamp stamp-green" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">● Live Data Active</span>
+      {% else %}
+        <span class="stamp stamp-red" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">○ Demo Mode</span>
+      {% endif %}
+      {% if has_groq_key %}
+        <span class="stamp stamp-green" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">● AI Active</span>
+      {% endif %}
+    </div>
     <form class="search-form" method="get" action="{{ url_for('index') }}">
       <input
         type="text"
@@ -29,7 +39,7 @@
       {% if demo_mode_bills %}
         Searching the bundled sample bills right now &mdash; add a free Congress.gov API key for live data.
       {% elif query %}
-        Searched titles of recently updated bills in the current and previous Congress.
+        Searching titles of recently updated bills in the 119th & 118th Congress. Try a bill number like "HR 836" for a direct lookup.
       {% else %}
         Showing the {{ bills|length }} most recently updated bills in the {{ current_congress }}th Congress.
       {% endif %}

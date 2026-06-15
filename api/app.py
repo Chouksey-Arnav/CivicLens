@@ -108,6 +108,8 @@ def inject_globals():
         demo_mode_bills=DEMO_MODE_BILLS,
         demo_mode_ai=DEMO_MODE_AI,
         current_congress=CURRENT_CONGRESS,
+        has_congress_key=bool(os.environ.get("CONGRESS_API_KEY")),
+        has_groq_key=bool(os.environ.get("GROQ_API_KEY")),
     )
 
 
@@ -215,6 +217,18 @@ def representatives():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+
+@app.route("/health")
+def health():
+    """Diagnostic route to check environment variables."""
+    return {
+        "congress_api_key_detected": bool(os.environ.get("CONGRESS_API_KEY")),
+        "groq_api_key_detected": bool(os.environ.get("GROQ_API_KEY")),
+        "vercel_env_detected": bool(os.environ.get("VERCEL")),
+        "current_congress": CURRENT_CONGRESS,
+        "python_version": sys.version,
+    }
 
 
 if __name__ == "__main__":
