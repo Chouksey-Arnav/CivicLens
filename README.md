@@ -27,9 +27,8 @@ Requires Python 3.9+.
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/civiclens.git
-cd civiclens
 pip install -r requirements.txt
-python app.py
+python api/app.py
 ```
 
 Then open **http://127.0.0.1:5000** — CivicLens will run in **demo mode** with bundled sample bills and representatives, no API keys needed.
@@ -64,7 +63,7 @@ Full setup instructions are also built into the app's **About** page.
 
 ```
 Congress.gov API  ──►  Flask backend  ──►  Jinja templates  ──►  Browser
- (official bill         (app.py +
+ (official bill         (api/app.py +
   text + summaries)       services/)
                               │
                               ▼
@@ -77,7 +76,7 @@ Congress.gov API  ──►  Flask backend  ──►  Jinja templates  ──�
                     so each bill is only summarized once
 ```
 
-- **`app.py`** — Flask routes for the home/search page, bill detail pages, the representatives lookup, and the about page.
+- **`api/app.py`** — Flask routes for the home/search page, bill detail pages, the representatives lookup, and the about page.
 - **`services/congress_api.py`** — thin wrapper around the Congress.gov API (bills, summaries, members).
 - **`services/ai_summarizer.py`** — sends the official summary to Groq's free Llama 3.3 model with a strict, neutral prompt and gets back structured JSON.
 - **`services/cache.py`** — local SQLite cache for AI summaries.
@@ -90,11 +89,9 @@ Congress.gov API  ──►  Flask backend  ──►  Jinja templates  ──�
 ## Project structure
 
 ```
-civiclens/
-├── app.py                  # Flask app + routes
-├── config.py                # env vars, constants, US states list
-├── requirements.txt
-├── .env.example
+.
+├── api/
+│   └── app.py               # Flask app + routes (entry point for Vercel)
 ├── services/
 │   ├── congress_api.py      # Congress.gov API client
 │   ├── ai_summarizer.py      # Groq AI plain-English rewriter
@@ -108,9 +105,14 @@ civiclens/
 │   ├── _member_card.html
 │   ├── about.html
 │   └── error.html
-└── static/
-    ├── css/style.css
-    └── js/main.js
+├── static/
+│   ├── css/style.css
+│   └── js/main.js
+├── config.py                # env vars, constants, US states list
+├── requirements.txt
+├── vercel.json              # Vercel deployment configuration
+├── .env.example
+└── .gitignore
 ```
 
 ---
