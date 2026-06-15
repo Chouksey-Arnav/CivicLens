@@ -31,7 +31,12 @@ CURRENT_CONGRESS = int(os.environ.get("CURRENT_CONGRESS", "119"))
 
 # --- Paths -----------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CACHE_DB_PATH = os.path.join(BASE_DIR, "data", "cache.db")
+
+# Vercel's filesystem is read-only except for /tmp.
+if os.environ.get("VERCEL"):
+    CACHE_DB_PATH = "/tmp/cache.db"
+else:
+    CACHE_DB_PATH = os.path.join(BASE_DIR, "data", "cache.db")
 
 # --- Feature flags -----------------------------------------------------------
 # If a key is missing, CivicLens automatically falls back to bundled sample

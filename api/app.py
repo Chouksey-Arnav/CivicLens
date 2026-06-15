@@ -10,6 +10,12 @@ See README.md / the "About" page in the app for setup instructions
 
 from flask import Flask, render_template, request
 
+import sys
+import os
+
+# Add the parent directory to sys.path so we can import from services and config
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from config import (
     US_STATES,
     BILL_TYPES,
@@ -22,7 +28,7 @@ from services import congress_api, ai_summarizer, cache, demo_data
 from services.congress_api import CongressAPIError
 from services.ai_summarizer import SummarizerError
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = FLASK_SECRET_KEY
 
 RECENT_BILLS_LIMIT = 24
