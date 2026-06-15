@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CivicLens{% endblock %}</title>
+  <meta name="description" content="CivicLens turns official congressional bill text into plain English, and helps you find your representatives in Congress.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="{{ url_for('index') }}">
+        <svg class="brand-mark" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="4" y="3" width="20" height="26" rx="2" fill="#FBF9F2" stroke="#FFE066" stroke-width="2"/>
+          <line x1="8" y1="10" x2="20" y2="10" stroke="#1B3C5C" stroke-width="1.5"/>
+          <line x1="8" y1="14" x2="20" y2="14" stroke="#1B3C5C" stroke-width="1.5"/>
+          <line x1="8" y1="18" x2="16" y2="18" stroke="#1B3C5C" stroke-width="1.5"/>
+          <circle cx="24" cy="24" r="7" fill="none" stroke="#FFE066" stroke-width="2.5"/>
+          <line x1="29" y1="29" x2="33" y2="33" stroke="#FFE066" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-text">
+          <span class="name">CivicLens</span>
+          <span class="tagline">Making democracy readable</span>
+        </span>
+      </a>
+      <nav class="site-nav">
+        <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">Bills</a>
+        <a href="{{ url_for('representatives') }}" class="{{ 'active' if request.endpoint == 'representatives' else '' }}">Find your reps</a>
+        <a href="{{ url_for('about') }}" class="{{ 'active' if request.endpoint == 'about' else '' }}">About</a>
+      </nav>
+    </div>
+  </header>
+
+  {% if demo_mode_bills %}
+  <div class="demo-banner">
+    <div class="container">
+      <strong>Demo mode</strong>
+      <span>
+        You're viewing sample bills and sample representatives so the app works with zero setup.
+        Add a free Congress.gov API key (and a free Groq key for AI summaries) to see live data
+        &mdash; see <a href="{{ url_for('about') }}#setup">setup instructions</a>.
+      </span>
+    </div>
+  </div>
+  {% elif demo_mode_ai %}
+  <div class="demo-banner">
+    <div class="container">
+      <strong>AI summaries off</strong>
+      <span>
+        Live bill data is on, but no <code>GROQ_API_KEY</code> is set, so plain-English summaries
+        aren't generated yet. Add a free key &mdash; see <a href="{{ url_for('about') }}#setup">setup instructions</a>.
+      </span>
+    </div>
+  </div>
+  {% endif %}
+
+  <main>
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>CivicLens is open source. Bill data and member info from <a href="https://www.congress.gov/" target="_blank" rel="noopener">Congress.gov</a>.</span>
+      <span>Plain-English summaries are AI-generated and may contain mistakes &mdash; always check the official text and sources before relying on them.</span>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}About — CivicLens{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>About CivicLens</h1>
+  <p class="lede">
+    CivicLens is an open-source tool that turns official congressional bill
+    text into plain English and helps people find their representatives in
+    Congress. It was built for the Congressional App Challenge.
+  </p>
+</section>
+
+<div class="about-content card">
+  <h2>What it does</h2>
+  <p>
+    Every bill introduced in Congress gets an official summary written by the
+    Congressional Research Service. Those summaries are accurate, but they're
+    written for people who already know legislative language. CivicLens takes
+    that official summary and asks an AI model to rewrite it as a short, plain
+    -English explainer: what the bill does, who it affects, its key
+    provisions, and why it matters &mdash; without taking a side.
+  </p>
+  <p>
+    It also includes a "find your representatives" tool that looks up your
+    current U.S. Senators and House member(s) directly from Congress.gov.
+  </p>
+
+  <h2>How accurate is the AI summary?</h2>
+  <p>
+    The AI is instructed to only use information from the official summary and
+    to flag when something is unclear, but AI models can still make mistakes.
+    Every bill page shows the original official summary right below the plain
+    -English version, and links back to the full bill text and history on
+    Congress.gov, so you can always check the source.
+  </p>
+
+  <h2 id="setup">Run it yourself (free, local setup)</h2>
+  <p>
+    CivicLens runs on your own computer and uses two free APIs. Neither
+    requires a credit card. This takes about 10 minutes the first time.
+  </p>
+
+  <h3>1. Get a free Congress.gov API key</h3>
+  <p>
+    Go to <a href="https://api.congress.gov/sign-up/" target="_blank" rel="noopener">api.congress.gov/sign-up</a>
+    and sign up with your email. You'll get a key by email almost
+    instantly. This key lets CivicLens pull real bill data (5,000 requests/hour, which is far more than one person needs).
+  </p>
+
+  <h3>2. Get a free Groq API key (for AI summaries)</h3>
+  <p>
+    Go to <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a>
+    and sign in with Google or email &mdash; no credit card needed. Create an
+    API key. This powers the plain-English rewriting.
+  </p>
+
+  <h3>3. Install and configure</h3>
+  <p>From a terminal, in the project folder:</p>
+  <pre><code>pip install -r requirements.txt
+cp .env.example .env</code></pre>
+  <p>
+    Open <code>.env</code> in any text editor and paste in your two keys:
+  </p>
+  <pre><code>CONGRESS_API_KEY=your_key_here
+GROQ_API_KEY=your_key_here</code></pre>
+
+  <h3>4. Run it</h3>
+  <pre><code>python app.py</code></pre>
+  <p>
+    Then open <a href="http://127.0.0.1:5000">http://127.0.0.1:5000</a> in
+    your browser.
+  </p>
+
+  <h3>Don't want to set up keys yet?</h3>
+  <p>
+    That's fine &mdash; CivicLens works right out of the box using bundled
+    sample bills and sample representatives, clearly labeled as demo data, so
+    you (or anyone reviewing this project) can explore the whole app with zero
+    setup.
+  </p>
+
+  <h2>Data &amp; tools used</h2>
+  <ul>
+    <li><strong>Bill data:</strong> <a href="https://api.congress.gov/" target="_blank" rel="noopener">Congress.gov API</a> (Library of Congress, free, public)</li>
+    <li><strong>AI summaries:</strong> <a href="https://console.groq.com/" target="_blank" rel="noopener">Groq API</a> (free tier, Llama 3.3 model)</li>
+    <li><strong>Backend:</strong> Python + Flask</li>
+    <li><strong>Storage:</strong> a local SQLite file to cache AI summaries so they're only generated once</li>
+  </ul>
+
+  <h2>Open source</h2>
+  <p>
+    The full source code is open source under the MIT license. Contributions,
+    forks, and feedback are welcome &mdash; see the project's GitHub
+    repository for details.
+  </p>
+</div>
+{% endblock %}

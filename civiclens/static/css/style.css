@@ -1,0 +1,692 @@
+/* =========================================================================
+   CivicLens — "Making democracy readable."
+
+   Design language: an official record you can actually read. Paper-toned
+   pages, civic blue for structure and links, a literal highlighter accent
+   for the plain-English translations, and a rubber-stamp motif for status
+   and the "AI translated" marker.
+   ========================================================================= */
+
+:root {
+  /* Palette */
+  --paper: #f2eee3;
+  --paper-card: #fbf9f2;
+  --paper-deep: #e7e0cd;
+  --ink: #1e2a38;
+  --ink-soft: #5b6b7a;
+  --line: #d7cfbd;
+
+  --civic-blue: #2c5d8c;
+  --civic-blue-dark: #1b3c5c;
+  --civic-blue-soft: #e3ecf4;
+
+  --highlighter: #ffe066;
+  --highlighter-soft: #fff7da;
+
+  --stamp-red: #a23b2e;
+  --stamp-red-soft: #f5e3df;
+
+  --status-green: #3f7a4f;
+  --status-green-soft: #e2eee4;
+
+  /* Type */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Source Sans 3", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+
+  /* Layout */
+  --max-width: 1080px;
+  --radius: 10px;
+  --shadow-card: 0 1px 2px rgba(30, 42, 56, 0.06), 0 4px 16px rgba(30, 42, 56, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  font-size: 17px;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: var(--civic-blue);
+  text-decoration-thickness: 1.5px;
+}
+
+a:hover {
+  color: var(--civic-blue-dark);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--civic-blue);
+  outline-offset: 2px;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 0.5em;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* =========================================================================
+   Header / nav
+   ========================================================================= */
+
+.site-header {
+  background: var(--civic-blue-dark);
+  color: var(--paper-card);
+  border-bottom: 4px solid var(--highlighter);
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--paper-card);
+}
+
+.brand:hover {
+  color: var(--highlighter);
+}
+
+.brand-mark {
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand-text .name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.brand-text .tagline {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--highlighter);
+}
+
+.site-nav {
+  display: flex;
+  gap: 22px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.site-nav a {
+  color: var(--paper-card);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  border-bottom-color: var(--highlighter);
+  color: var(--paper-card);
+}
+
+/* =========================================================================
+   Demo mode banner
+   ========================================================================= */
+
+.demo-banner {
+  background: var(--highlighter-soft);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.92rem;
+}
+
+.demo-banner .container {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.demo-banner strong {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  background: var(--ink);
+  color: var(--highlighter);
+  padding: 2px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* =========================================================================
+   Page sections / hero
+   ========================================================================= */
+
+main {
+  padding-bottom: 64px;
+}
+
+.hero {
+  padding: 48px 0 32px;
+}
+
+.hero h1 {
+  font-size: clamp(2.1rem, 5vw, 3.1rem);
+  max-width: 18ch;
+}
+
+.hero p.lede {
+  font-size: 1.15rem;
+  color: var(--ink-soft);
+  max-width: 60ch;
+}
+
+.search-card {
+  margin-top: 28px;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-form input[type="text"] {
+  flex: 1 1 240px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--civic-blue);
+  background: var(--civic-blue);
+  color: var(--paper-card);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--civic-blue-dark);
+  border-color: var(--civic-blue-dark);
+  color: var(--paper-card);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--civic-blue);
+}
+
+.btn-outline:hover {
+  background: var(--civic-blue-soft);
+  color: var(--civic-blue-dark);
+}
+
+.search-hint {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+/* =========================================================================
+   Bill cards / list
+   ========================================================================= */
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.bill-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.bill-card {
+  position: relative;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.bill-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(30, 42, 56, 0.08), 0 10px 24px rgba(30, 42, 56, 0.1);
+  color: var(--ink);
+}
+
+.bill-number {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--civic-blue-dark);
+  background: var(--civic-blue-soft);
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.bill-card h3 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.bill-meta {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-family: var(--font-mono);
+}
+
+/* Rubber-stamp status badge */
+.stamp {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 2px dashed currentColor;
+  border-radius: 4px;
+  padding: 4px 10px;
+  display: inline-block;
+  transform: rotate(-3deg);
+  width: fit-content;
+}
+
+.stamp-blue { color: var(--civic-blue); }
+.stamp-green { color: var(--status-green); }
+.stamp-red { color: var(--stamp-red); }
+
+/* =========================================================================
+   Bill detail page
+   ========================================================================= */
+
+.bill-header {
+  padding: 40px 0 24px;
+}
+
+.bill-header .bill-number {
+  font-size: 0.9rem;
+}
+
+.bill-header h1 {
+  margin-top: 10px;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.bill-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+  font-size: 0.92rem;
+}
+
+.bill-info-grid dt {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 3px;
+}
+
+.bill-info-grid dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.card {
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 14px;
+}
+
+.official-text {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+  border-left: 3px solid var(--line);
+  padding-left: 18px;
+}
+
+/* Plain-English / "translated" card */
+.plain-english {
+  background: var(--highlighter-soft);
+  border: 1px solid var(--highlighter);
+}
+
+.translated-stamp {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--stamp-red);
+  border: 2px dashed var(--stamp-red);
+  border-radius: 4px;
+  padding: 5px 12px;
+  display: inline-block;
+  transform: rotate(-3deg);
+  margin-bottom: 14px;
+}
+
+.plain-english p.plain-summary {
+  font-size: 1.12rem;
+  background: linear-gradient(180deg, transparent 60%, var(--highlighter) 60%);
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.plain-english h3 {
+  font-size: 0.95rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin: 22px 0 8px;
+}
+
+.plain-english ul {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.plain-english li {
+  margin-bottom: 6px;
+}
+
+.ai-disclosure {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+/* =========================================================================
+   Representatives
+   ========================================================================= */
+
+.rep-form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.rep-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rep-form label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.rep-form select,
+.rep-form input {
+  font-size: 1rem;
+  font-family: var(--font-body);
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  min-width: 160px;
+}
+
+.member-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  margin-top: 24px;
+}
+
+.member-card {
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+}
+
+.member-avatar {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--civic-blue-soft);
+  color: var(--civic-blue-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-body {
+  min-width: 0;
+}
+
+
+.member-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.party-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.party-d { background: var(--civic-blue-soft); color: var(--civic-blue-dark); }
+.party-r { background: var(--stamp-red-soft); color: var(--stamp-red); }
+.party-i, .party-other { background: var(--paper-deep); color: var(--ink-soft); }
+
+.member-meta {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+}
+
+/* =========================================================================
+   Misc: notices, empty states, footer
+   ========================================================================= */
+
+.notice {
+  border: 1px solid var(--line);
+  background: var(--paper-card);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin: 16px 0;
+}
+
+.notice-error {
+  border-color: var(--stamp-red);
+  background: var(--stamp-red-soft);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--ink-soft);
+}
+
+.about-content h2 {
+  margin-top: 32px;
+  font-size: 1.25rem;
+}
+
+.about-content p,
+.about-content li {
+  color: var(--ink);
+}
+
+.about-content code {
+  font-family: var(--font-mono);
+  background: var(--paper-deep);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.about-content pre {
+  background: var(--ink);
+  color: var(--paper-card);
+  padding: 14px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.about-content pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--paper-deep);
+  margin-top: 48px;
+}
+
+.site-footer .container {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.site-footer a {
+  color: var(--civic-blue-dark);
+}
+
+@media (max-width: 640px) {
+  .site-header .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

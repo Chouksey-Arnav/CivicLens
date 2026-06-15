@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}CivicLens — Bills in plain English{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>See what Congress is doing &mdash; in plain English.</h1>
+  <p class="lede">
+    CivicLens pulls real bills from Congress.gov and rewrites the official
+    summaries into language anyone can understand, so you can follow what's
+    actually happening without a law degree.
+  </p>
+
+  <div class="search-card">
+    <form class="search-form" method="get" action="{{ url_for('index') }}">
+      <input
+        type="text"
+        name="q"
+        value="{{ query }}"
+        placeholder="Search recent bills by keyword (e.g. broadband, school, veterans)"
+        aria-label="Search recent bills by keyword"
+      >
+      <button class="btn" type="submit">Search</button>
+      {% if query %}
+        <a class="btn btn-outline" href="{{ url_for('index') }}">Clear</a>
+      {% endif %}
+    </form>
+    <p class="search-hint">
+      {% if demo_mode_bills %}
+        Searching the bundled sample bills right now &mdash; add a free Congress.gov API key for live data.
+      {% elif query %}
+        Searched the 250 most recently updated bills in the {{ current_congress }}th Congress by title.
+      {% else %}
+        Showing the {{ bills|length }} most recently updated bills in the {{ current_congress }}th Congress.
+      {% endif %}
+    </p>
+  </div>
+</section>
+
+{% if error %}
+<div class="notice notice-error">
+  <strong>Couldn't load bills:</strong> {{ error }}
+</div>
+{% endif %}
+
+<section>
+  <div class="section-heading">
+    <h2>{{ 'Search results' if query else 'Recently updated bills' }}</h2>
+    {% if query %}<span class="bill-meta">{{ bills|length }} match{{ 'es' if bills|length != 1 else '' }} for &ldquo;{{ query }}&rdquo;</span>{% endif %}
+  </div>
+
+  {% if bills %}
+  <div class="bill-grid">
+    {% for bill in bills %}
+      {% set status = status_label(bill.latestAction.text if bill.latestAction else '') %}
+      <a class="bill-card" href="{{ url_for('bill_detail', congress=bill.congress, bill_type=bill.type|lower, number=bill.number) }}">
+        <span class="bill-number">{{ bill_label(bill) }}</span>
+        <h3>{{ bill.title }}</h3>
+        <div class="bill-meta">
+          {% if bill.policyArea %}<span>{{ bill.policyArea.name }}</span>{% endif %}
+          {% if bill.latestAction %}<span>Updated {{ bill.latestAction.actionDate }}</span>{% endif %}
+        </div>
+        <span class="stamp {{ status.css_class }}">{{ status.label }}</span>
+      </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>No bills matched &ldquo;{{ query }}&rdquo;. Try a different keyword.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

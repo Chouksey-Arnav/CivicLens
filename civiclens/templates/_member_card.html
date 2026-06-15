@@ -1,0 +1,24 @@
+<div class="member-card">
+  <div class="member-avatar">
+    {% if m.image_url %}
+      <img src="{{ m.image_url }}" alt="" loading="lazy">
+    {% else %}
+      {{ (m.name or "?")[0] }}
+    {% endif %}
+  </div>
+  <div class="member-body">
+    <h3>{{ m.name }}</h3>
+    {% set party_code = (m.partyName or "")[0]|lower %}
+    <span class="party-badge party-{{ party_code if party_code in ['d','r','i'] else 'other' }}">
+      {{ m.partyName or "Unknown party" }}
+    </span>
+    <div class="member-meta">
+      {{ m.chamber }}{% if m.district is not none %}, District {{ m.district }}{% endif %} &mdash; {{ m.state }}
+    </div>
+    {% if m.url %}
+      <p style="margin-top: 8px; margin-bottom: 0;">
+        <a href="{{ m.url }}" target="_blank" rel="noopener">Official page &rarr;</a>
+      </p>
+    {% endif %}
+  </div>
+</div>
