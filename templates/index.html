@@ -29,7 +29,7 @@
       {% if demo_mode_bills %}
         Searching the bundled sample bills right now &mdash; add a free Congress.gov API key for live data.
       {% elif query %}
-        Searched the 250 most recently updated bills in the {{ current_congress }}th Congress by title.
+        Searched titles of recently updated bills in the current and previous Congress.
       {% else %}
         Showing the {{ bills|length }} most recently updated bills in the {{ current_congress }}th Congress.
       {% endif %}

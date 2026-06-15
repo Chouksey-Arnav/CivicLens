@@ -21,6 +21,7 @@ class CongressAPIError(Exception):
 
 def _get(path, params=None):
     if not CONGRESS_API_KEY:
+        print("DEBUG: CONGRESS_API_KEY is missing")
         raise CongressAPIError(
             "No CONGRESS_API_KEY set. Get a free key at "
             "https://api.congress.gov/sign-up/ and add it to your .env file."
@@ -31,13 +32,17 @@ def _get(path, params=None):
     params["format"] = "json"
 
     url = f"{CONGRESS_API_BASE}{path}"
+    print(f"DEBUG: Calling Congress.gov API: {url} with params { {k:v for k,v in params.items() if k != 'api_key'} }")
     try:
         response = requests.get(url, params=params, timeout=TIMEOUT)
     except requests.RequestException as exc:
+        print(f"DEBUG: Request failed: {exc}")
         raise CongressAPIError(f"Couldn't reach Congress.gov ({exc}).") from exc
 
+    print(f"DEBUG: Response status: {response.status_code}")
     if response.status_code == 403:
-        raise CongressAPIError("Congress.gov rejected the API key (403). Double-check CONGRESS_API_KEY in .env.")
+        print("DEBUG: API key rejected (403)")
+        raise CongressAPIError("Congress.gov rejected the API key (403). Double-check CONGRESS_API_KEY in your Vercel settings.")
     if response.status_code == 429:
         raise CongressAPIError("Congress.gov rate limit hit (429). Wait a bit and try again.")
 
@@ -61,16 +66,32 @@ def search_bills(query, congress=CURRENT_CONGRESS, fetch_limit=250, max_results=
 
     The Congress.gov API has no full-text search endpoint, so this pulls a
     batch of the most recently updated bills for the current Congress and
-    filters by title on our side. Good enough for "find a bill about X".
-    """
-    data = _get(f"/bill/{congress}", params={"limit": fetch_limit, "sort": "updateDate+desc"})
-    bills = data.get("bills", [])
+    filters by title on our side.
 
+    If no matches are found in the current Congress, it automatically
+    checks the previous Congress (118th) as well.
+    """
     query_lower = query.lower().strip()
     if not query_lower:
-        return bills[:max_results]
+        data = _get(f"/bill/{congress}", params={"limit": fetch_limit, "sort": "updateDate+desc"})
+        return data.get("bills", [])[:max_results]
 
+    # Try current congress first
+    data = _get(f"/bill/{congress}", params={"limit": fetch_limit, "sort": "updateDate+desc"})
+    bills = data.get("bills", [])
     matches = [b for b in bills if query_lower in b.get("title", "").lower()]
+
+    # If no matches and we are in the current congress, fallback to the previous one
+    if not matches and congress == CURRENT_CONGRESS:
+        previous_congress = congress - 1
+        try:
+            data = _get(f"/bill/{previous_congress}", params={"limit": fetch_limit, "sort": "updateDate+desc"})
+            bills = data.get("bills", [])
+            matches = [b for b in bills if query_lower in b.get("title", "").lower()]
+        except CongressAPIError:
+            # If previous congress fails, just return the empty current matches
+            pass
+
     return matches[:max_results]
 
 
