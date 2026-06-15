@@ -41,7 +41,7 @@
       <strong>Demo mode</strong>
       <span>
         You're viewing sample bills and sample representatives so the app works with zero setup.
-        Add a free Congress.gov API key (and a free Groq key for AI summaries) to see live data
+        Add a free Congress.gov API key (and a free Groq or xAI key for AI summaries) to see live data
         &mdash; see <a href="{{ url_for('about') }}#setup">setup instructions</a>.
       </span>
     </div>
@@ -51,8 +51,17 @@
     <div class="container">
       <strong>AI summaries off</strong>
       <span>
-        Live bill data is on, but no <code>GROQ_API_KEY</code> is set, so plain-English summaries
+        Live bill data is on, but no <code>XAI_API_KEY</code> or <code>GROQ_API_KEY</code> is set, so plain-English summaries
         aren't generated yet. Add a free key &mdash; see <a href="{{ url_for('about') }}#setup">setup instructions</a>.
+      </span>
+    </div>
+  </div>
+  {% else %}
+  <div class="demo-banner" style="background: var(--civic-blue-soft); border-color: var(--civic-blue);">
+    <div class="container">
+      <strong style="background: var(--civic-blue); color: white;">Live Data Active</strong>
+      <span>
+        Connected to Congress.gov API and Grok-powered AI for global bill search and summarization.
       </span>
     </div>
   </div>
